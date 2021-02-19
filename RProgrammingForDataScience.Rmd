@@ -1,0 +1,51 @@
+---
+title: "R programming for Data Science Notes"
+author: "Minxin Lu"
+date: "2/17/2021"
+output: html_document
+---
+website: <https://bookdown.org/rdpeng/rprogdatascience/getting-data-in-and-out-of-r.html>
+
+### 4. R Nuts and Bolts
+
+- A **vector** can only contain objects of the same class.
+- `c()` creates a vector
+
+```{r}
+# create an empty vector
+x <- vector("numeric", length = 10)
+# assigning names to an integer vector
+x <- 1:3
+names(x) <- c("New York", "Seattle", "Los Angeles")
+```
+
+- A **list** is represented as a vector but can contain objects of different classes.
+
+```{r}
+x <- list("Los Angeles" = 1, Boston = 2, London = 3)
+```
+
+- If you explicitly want an integer, you need to specify the L suffix. So entering 1 in R gives you a numeric object like "1.00"; entering **1L** explicitly gives you an integer object.
+- a special number inf
+- Attributes of an object (if any) can be accessed using the `attributes()` function. Not all R objects contain attributes, in which case the `attributes()` function returns `NULL`
+
+- create a **matrix**
+```{r}
+  m <- matrix(nrow = 2, ncol = 3)
+```
+
+- matrix names
+```{r}
+m <- matrix(1:4, nrow = 2, ncol = 2)
+dimnames(m) <- list(c("a", "b"), c("c", "d"))
+```
+
+- data frame set column names `names()`, set row names `row.names()`
+- matrix set column names `colnames()`, `rownames()`
+- order of **the levels of a factor**:
+```{r}
+x <- factor(c("yes", "yes", "no", "yes", "no"),levels = c("yes", "no"))
+```
+
+### 5 Getting Data In and Out of R
+
