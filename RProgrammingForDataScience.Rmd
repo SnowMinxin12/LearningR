@@ -47,26 +47,33 @@ dimnames(m) <- list(c("a", "b"), c("c", "d"))
 x <- factor(c("yes", "yes", "no", "yes", "no"),levels = c("yes", "no"))
 ```
 
-### 5 Getting Data In and Out of R
+### 5,6 Getting Data In and Out of R and readr Package
+- no need to unzip a csv, R will read zip file as it is
 - Common commands
-  - `read.table`, `read.csv`, for reading tabular data
+  - `read_table`, `read_csv`, in `library(readr)` for reading tabular data
+```{r eval=false}
+library(readr)
+logs <- read_csv("data/2016-07-19.csv.bz2", n_max = 10)
+cols(
+  date = col_date(format = ""),
+  time = col_time(format = ""),
+  size = col_double(),
+  country = col_character()
+)
+# or 
+logs <- read_csv("data/2016-07-19.csv.bz2", col_types = "ccicccccci", n_max = 10) # c=chr, i=int
+```
+  - if embedding `read_csv` in a loop, it’s probably best to set progress = FALSE
   - `readLines`, for reading lines of a text file
   - `source`, for reading in R code files (inverse of dump)
   - `dget`, for reading in R code files (inverse of dput)
   - `load`, for reading in saved workspaces
 
 - To be more efficient reading large datasets
-  - read.table()`
   - Make a rough calculation of the memory required to store your dataset. Double precision floating point numbers are stored using 64 bits of memory, or 8 bytes. If larger than  RAM on your computer, stop.
   - Set `comment.char = ""` if there are no commented lines in your file.
-  - Use `colClasses` (often twice as fast)
-
-```{r eval=FALSE}
-initial <-read.table("FILENAME.txt",nrow=100)
-classes <- sapply(initial, classes)
-data <- read.table("FILENAME.txt", colClasses = classes)
-```
-- Set `nrows` (helps with memory usage) A mild overestimate is okay
+  - Specify `colClasses` (often twice as fast) by reading the first 1000 lines of data: `readr` package does it by default
+  - Set `nrows` (helps with memory usage) A mild overestimate is okay
 
 - useful to know:
   - How much memory is available on your system?
@@ -74,4 +81,4 @@ data <- read.table("FILENAME.txt", colClasses = classes)
   - Are there other users logged into the same system?
   - What operating system ar you using? Some operating systems can limit the     amount of memory a single process can access
 
-### 6 Using the readr Package
+### 
