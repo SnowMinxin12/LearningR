@@ -147,5 +147,59 @@ load("mydata.RData")
 x <- list(1, 2, 3)
 serialize(x, NULL)
 ```
-
 can use `save()` to send it to a file.
+
+### 8 Connection to the Outside World
+#### 8.1 connection to text files using `file()`
+```{r}
+str(file)
+```
+- `description` name of file
+- `open` mode of file to be opened in
+  - “r” open file in read only mode
+  - “w” open a file for writing (and initializing a new file)
+  - “a” open a file for appending
+  - “rb”, “wb”, “ab” reading, writing, or appending in binary mode (Windows)
+  
+In practice, we often don’t need to deal with the connection interface directly as many functions for reading and writing data just deal with it in the background.
+```{r eval=FALSE}
+## Create a connection to 'foo.txt'
+con <- file("foo.txt")       
+
+## Open connection to 'foo.txt' in read-only mode
+open(con, "r")               
+
+## Read from the connection
+data <- read.csv(con)        
+
+## Close the connection
+close(con)                   
+```
+
+is the same as
+```{r eval=FALSE}
+data <- read.csv("foo.txt")
+```
+
+#### 8.2 Reading Line by Line of a Text File `readLines()`
+```{r eval=FALSE}
+## Open connection to gz-compressed text file
+con <- gzfile("words.gz")   
+x <- readLines(con, 10) 
+```
+- usful for text files that may be unstructured or contain non-standard data
+- useful for reading in lines of webpages
+- `writeLines()` takes a character vector and writes each element of the vector one line at a time to a text file.
+
+#### 8.3 Reading From a URL Connection
+```{r}
+## Open a URL connection for reading
+con <- url("https://www.ted.com", "r")  
+
+## Read the web page
+x <- readLines(con)                      
+
+## Print out the first few lines
+head(x)                                  
+```
+

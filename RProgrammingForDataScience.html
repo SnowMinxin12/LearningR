@@ -386,8 +386,8 @@ names(x) &lt;- c(&quot;New York&quot;, &quot;Seattle&quot;, &quot;Los Angeles&qu
 </ul>
 <pre class="r"><code>x &lt;- list(&quot;Los Angeles&quot; = 1, Boston = 2, London = 3)</code></pre>
 <ul>
-<li><p>If you explicitly want an integer, you need to specify the L suffix. So entering 1 in R gives you a numeric object like “1.00”; entering <strong>1L</strong> explicitly gives you an integer object.</p></li>
-<li><p>a special number inf</p></li>
+<li>If you explicitly want an integer, you need to specify the L suffix. So entering 1 in R gives you a numeric object like “1.00”; entering <strong>1L</strong> explicitly gives you an integer object.</li>
+<li>a special number inf</li>
 <li><p>Attributes of an object (if any) can be accessed using the <code>attributes()</code> function. Not all R objects contain attributes, in which case the <code>attributes()</code> function returns <code>NULL</code></p></li>
 <li><p>create a <strong>matrix</strong></p></li>
 </ul>
@@ -424,19 +424,19 @@ cols(
 # or 
 logs &lt;- read_csv(&quot;data/2016-07-19.csv.bz2&quot;, col_types = &quot;ccicccccci&quot;, n_max = 10) # c=chr, i=int</code></pre>
 <ul>
-<li><p>if embedding <code>read_csv</code> in a loop, it’s probably best to set progress = FALSE</p></li>
-<li><p><code>readLines</code>, for reading lines of a text file</p></li>
-<li><p><code>source</code>, for reading in R code files (inverse of dump)</p></li>
-<li><p><code>dget</code>, for reading in R code files (inverse of dput)</p></li>
+<li>if embedding <code>read_csv</code> in a loop, it’s probably best to set progress = FALSE</li>
+<li><code>readLines</code>, for reading lines of a text file</li>
+<li><code>source</code>, for reading in R code files (inverse of dump)</li>
+<li><code>dget</code>, for reading in R code files (inverse of dput)</li>
 <li><p><code>load</code>, for reading in saved workspaces</p></li>
-<li><p>To be more efficient reading large datasets</p>
+<li>To be more efficient reading large datasets
 <ul>
 <li>Make a rough calculation of the memory required to store your dataset. Double precision floating point numbers are stored using 64 bits of memory, or 8 bytes. If larger than RAM on your computer, stop.</li>
 <li>Set <code>comment.char = &quot;&quot;</code> if there are no commented lines in your file.</li>
 <li>Specify <code>colClasses</code> (often twice as fast) by reading the first 1000 lines of data: <code>readr</code> package does it by default</li>
 <li>Set <code>nrows</code> (helps with memory usage) A mild overestimate is okay</li>
 </ul></li>
-<li><p>useful to know:</p>
+<li>useful to know:
 <ul>
 <li>How much memory is available on your system?</li>
 <li>What other applications are in use? Can you close any of them?</li>
@@ -455,12 +455,12 @@ logs &lt;- read_csv(&quot;data/2016-07-19.csv.bz2&quot;, col_types = &quot;ccicc
 <li>maybe preferable：data stored in a CSV file and then a separate code file that specifies the metadata.</li>
 </ul>
 <pre class="r"><code>y &lt;- data.frame(a = 1, b = &quot;a&quot;)  
-## Print &#39;dput&#39; output to console
+## Print 'dput' output to console
 dput(y)                          
 structure(list(a = 1, b = &quot;a&quot;), class = &quot;data.frame&quot;, row.names = c(NA, -1L))</code></pre>
-<pre class="r"><code>## Send &#39;dput&#39; output to a file
+<pre class="r"><code>## Send 'dput' output to a file
 dput(y, file = &quot;y.R&quot;)            
-## Read in &#39;dput&#39; output from a file
+## Read in 'dput' output from a file
 new.y &lt;- dget(&quot;y.R&quot;)             
 new.y</code></pre>
 <pre class="r"><code>x &lt;- &quot;foo&quot;
@@ -479,9 +479,9 @@ x</code></pre>
 <p>Individual R objects can be saved to a file using the save() function.</p>
 <pre class="r"><code>a &lt;- data.frame(x= rnorm(100), y=runif(100))
 b &lt;- c(3, 4.4, 1/3)
-## Save &#39;a&#39; and &#39;b&#39; to a file
+## Save 'a' and 'b' to a file
 save(a,b, file = &quot;mydata.rda&quot;)
-## Load &#39;a&#39; and &#39;b&#39; into your workspace
+## Load 'a' and 'b' into your workspace
 load(&quot;mydata.rda&quot;)</code></pre>
 <p>If you have a lot of objects that you want to save to a file, you can save all objects in your workspace using the save.image() function.</p>
 <pre class="r"><code>## Save everything to a file
@@ -497,11 +497,72 @@ load(&quot;mydata.RData&quot;)     </code></pre>
 </ul>
 <pre class="r"><code>x &lt;- list(1, 2, 3)
 serialize(x, NULL)</code></pre>
-<pre><code>##  [1] 58 0a 00 00 00 03 00 04 00 02 00 03 05 00 00 00 00 06 43 50 31 32 35 32 00
-## [26] 00 00 13 00 00 00 03 00 00 00 0e 00 00 00 01 3f f0 00 00 00 00 00 00 00 00
-## [51] 00 0e 00 00 00 01 40 00 00 00 00 00 00 00 00 00 00 0e 00 00 00 01 40 08 00
-## [76] 00 00 00 00 00</code></pre>
+<pre><code>##  [1] 58 0a 00 00 00 03 00 04 00 02 00 03 05 00 00 00 00 05 55 54 46 2d 38 00 00
+## [26] 00 13 00 00 00 03 00 00 00 0e 00 00 00 01 3f f0 00 00 00 00 00 00 00 00 00
+## [51] 0e 00 00 00 01 40 00 00 00 00 00 00 00 00 00 00 0e 00 00 00 01 40 08 00 00
+## [76] 00 00 00 00</code></pre>
 <p>can use <code>save()</code> to send it to a file.</p>
+</div>
+</div>
+<div id="connection-to-the-outside-world" class="section level3">
+<h3>8 Connection to the Outside World</h3>
+<div id="connection-to-text-files-using-file" class="section level4">
+<h4>8.1 connection to text files using <code>file()</code></h4>
+<pre class="r"><code>str(file)</code></pre>
+<pre><code>## function (description = &quot;&quot;, open = &quot;&quot;, blocking = TRUE, encoding = getOption(&quot;encoding&quot;), 
+##     raw = FALSE, method = getOption(&quot;url.method&quot;, &quot;default&quot;))</code></pre>
+<ul>
+<li><code>description</code> name of file</li>
+<li><code>open</code> mode of file to be opened in
+<ul>
+<li>“r” open file in read only mode</li>
+<li>“w” open a file for writing (and initializing a new file)</li>
+<li>“a” open a file for appending</li>
+<li>“rb”, “wb”, “ab” reading, writing, or appending in binary mode (Windows)</li>
+</ul></li>
+</ul>
+<p>In practice, we often don’t need to deal with the connection interface directly as many functions for reading and writing data just deal with it in the background.</p>
+<pre class="r"><code>## Create a connection to 'foo.txt'
+con &lt;- file(&quot;foo.txt&quot;)       
+
+## Open connection to 'foo.txt' in read-only mode
+open(con, &quot;r&quot;)               
+
+## Read from the connection
+data &lt;- read.csv(con)        
+
+## Close the connection
+close(con)                   </code></pre>
+<p>is the same as</p>
+<pre class="r"><code>data &lt;- read.csv(&quot;foo.txt&quot;)</code></pre>
+</div>
+<div id="reading-line-by-line-of-a-text-file-readlines" class="section level4">
+<h4>8.2 Reading Line by Line of a Text File <code>readLines()</code></h4>
+<pre class="r"><code>## Open connection to gz-compressed text file
+con &lt;- gzfile(&quot;words.gz&quot;)   
+x &lt;- readLines(con, 10) </code></pre>
+<ul>
+<li>usful for text files that may be unstructured or contain non-standard data</li>
+<li>useful for reading in lines of webpages</li>
+<li><code>writeLines()</code> takes a character vector and writes each element of the vector one line at a time to a text file.</li>
+</ul>
+</div>
+<div id="reading-from-a-url-connection" class="section level4">
+<h4>8.3 Reading From a URL Connection</h4>
+<pre class="r"><code>## Open a URL connection for reading
+con &lt;- url(&quot;https://www.ted.com&quot;, &quot;r&quot;)  
+
+## Read the web page
+x &lt;- readLines(con)                      </code></pre>
+<pre><code>## Warning in readLines(con): incomplete final line found on 'https://www.ted.com'</code></pre>
+<pre class="r"><code>## Print out the first few lines
+head(x)                                  </code></pre>
+<pre><code>## [1] &quot;&lt;!DOCTYPE html&gt;&quot;                                                                      
+## [2] &quot;&lt;!--[if lt IE 8]&gt; &lt;html class=\&quot;no-js loggedout oldie ie7\&quot; lang=\&quot;en\&quot;&gt; &lt;![endif]--&gt;&quot;
+## [3] &quot;&lt;!--[if IE 8]&gt; &lt;html class=\&quot;no-js loggedout oldie ie8\&quot; lang=\&quot;en\&quot;&gt; &lt;![endif]--&gt;&quot;   
+## [4] &quot;&lt;!--[if gt IE 8]&gt;&lt;!--&gt;&lt;html class='no-js loggedout' lang='en'&gt;&lt;!--&lt;![endif]--&gt;&quot;       
+## [5] &quot;&lt;head&gt;&quot;                                                                               
+## [6] &quot;&lt;script&gt;&quot;</code></pre>
 </div>
 </div>
 
