@@ -404,30 +404,38 @@ dimnames(m) &lt;- list(c(&quot;a&quot;, &quot;b&quot;), c(&quot;c&quot;, &quot;d
 </ul>
 <pre class="r"><code>x &lt;- factor(c(&quot;yes&quot;, &quot;yes&quot;, &quot;no&quot;, &quot;yes&quot;, &quot;no&quot;),levels = c(&quot;yes&quot;, &quot;no&quot;))</code></pre>
 </div>
-<div id="getting-data-in-and-out-of-r" class="section level3">
-<h3>5 Getting Data In and Out of R</h3>
+<div id="getting-data-in-and-out-of-r-and-readr-package" class="section level3">
+<h3>5,6 Getting Data In and Out of R and readr Package</h3>
 <ul>
+<li>no need to unzip a csv, R will read zip file as it is</li>
 <li>Common commands
 <ul>
-<li><code>read.table</code>, <code>read.csv</code>, for reading tabular data</li>
-<li><code>readLines</code>, for reading lines of a text file</li>
-<li><code>source</code>, for reading in R code files (inverse of dump)</li>
-<li><code>dget</code>, for reading in R code files (inverse of dput)</li>
-<li><code>load</code>, for reading in saved workspaces</li>
-</ul></li>
-<li>To be more efficient reading large datasets
-<ul>
-<li>read.table()`</li>
-<li>Make a rough calculation of the memory required to store your dataset. Double precision floating point numbers are stored using 64 bits of memory, or 8 bytes. If larger than RAM on your computer, stop.</li>
-<li>Set <code>comment.char = &quot;&quot;</code> if there are no commented lines in your file.</li>
-<li>Use <code>colClasses</code> (often twice as fast)</li>
+<li><code>read_table</code>, <code>read_csv</code>, in <code>library(readr)</code> for reading tabular data</li>
 </ul></li>
 </ul>
-<pre class="r"><code>initial &lt;-read.table(&quot;FILENAME.txt&quot;,nrow=100)
-classes &lt;- sapply(initial, classes)
-data &lt;- read.table(&quot;FILENAME.txt&quot;, colClasses = classes)</code></pre>
+<pre class="r"><code>library(readr)
+logs &lt;- read_csv(&quot;data/2016-07-19.csv.bz2&quot;, n_max = 10)
+cols(
+  date = col_date(format = &quot;&quot;),
+  time = col_time(format = &quot;&quot;),
+  size = col_double(),
+  country = col_character()
+)
+# or 
+logs &lt;- read_csv(&quot;data/2016-07-19.csv.bz2&quot;, col_types = &quot;ccicccccci&quot;, n_max = 10) # c=chr, i=int</code></pre>
 <ul>
-<li><p>Set <code>nrows</code> (helps with memory usage) A mild overestimate is okay</p></li>
+<li><p>if embedding <code>read_csv</code> in a loop, it’s probably best to set progress = FALSE</p></li>
+<li><p><code>readLines</code>, for reading lines of a text file</p></li>
+<li><p><code>source</code>, for reading in R code files (inverse of dump)</p></li>
+<li><p><code>dget</code>, for reading in R code files (inverse of dput)</p></li>
+<li><p><code>load</code>, for reading in saved workspaces</p></li>
+<li><p>To be more efficient reading large datasets</p>
+<ul>
+<li>Make a rough calculation of the memory required to store your dataset. Double precision floating point numbers are stored using 64 bits of memory, or 8 bytes. If larger than RAM on your computer, stop.</li>
+<li>Set <code>comment.char = &quot;&quot;</code> if there are no commented lines in your file.</li>
+<li>Specify <code>colClasses</code> (often twice as fast) by reading the first 1000 lines of data: <code>readr</code> package does it by default</li>
+<li>Set <code>nrows</code> (helps with memory usage) A mild overestimate is okay</li>
+</ul></li>
 <li><p>useful to know:</p>
 <ul>
 <li>How much memory is available on your system?</li>
@@ -437,8 +445,64 @@ data &lt;- read.table(&quot;FILENAME.txt&quot;, colClasses = classes)</code></pr
 </ul></li>
 </ul>
 </div>
-<div id="using-the-readr-package" class="section level3">
-<h3>6 Using the readr Package</h3>
+<div id="storing-data-using-textual-and-binary-formats" class="section level3">
+<h3>7 Storing Data Using Textual and Binary Formats</h3>
+<div id="textual-formats" class="section level4">
+<h4>7.1 Textual Formats</h4>
+<ul>
+<li>The <code>dump()</code> and <code>dput()</code> functions are useful because the resulting textual format is edit-able, and in the case of corruption, potentially recoverable. can preserve the class of each column of a table or the levels of a factor variable</li>
+<li>The format is not very space-efficient, because all of the metadata is specified. Also, it is really only partially readable.</li>
+<li>maybe preferable：data stored in a CSV file and then a separate code file that specifies the metadata.</li>
+</ul>
+<pre class="r"><code>y &lt;- data.frame(a = 1, b = &quot;a&quot;)  
+## Print &#39;dput&#39; output to console
+dput(y)                          
+structure(list(a = 1, b = &quot;a&quot;), class = &quot;data.frame&quot;, row.names = c(NA, -1L))</code></pre>
+<pre class="r"><code>## Send &#39;dput&#39; output to a file
+dput(y, file = &quot;y.R&quot;)            
+## Read in &#39;dput&#39; output from a file
+new.y &lt;- dget(&quot;y.R&quot;)             
+new.y</code></pre>
+<pre class="r"><code>x &lt;- &quot;foo&quot;
+y &lt;- data.frame(a = 1L, b = &quot;a&quot;)
+# dump() R objects to a file by passing a character vector of their names.
+dump(c(&quot;x&quot;, &quot;y&quot;), file = &quot;data.R&quot;) 
+rm(x, y)</code></pre>
+<p>The inverse of dump() is source().</p>
+<pre class="r"><code>source(&quot;data.R&quot;)
+str(y)
+x</code></pre>
+</div>
+<div id="binary-formats" class="section level4">
+<h4>7.2 Binary Formats</h4>
+<p><code>save()</code>, <code>save.image()</code>, and <code>serialize()</code></p>
+<p>Individual R objects can be saved to a file using the save() function.</p>
+<pre class="r"><code>a &lt;- data.frame(x= rnorm(100), y=runif(100))
+b &lt;- c(3, 4.4, 1/3)
+## Save &#39;a&#39; and &#39;b&#39; to a file
+save(a,b, file = &quot;mydata.rda&quot;)
+## Load &#39;a&#39; and &#39;b&#39; into your workspace
+load(&quot;mydata.rda&quot;)</code></pre>
+<p>If you have a lot of objects that you want to save to a file, you can save all objects in your workspace using the save.image() function.</p>
+<pre class="r"><code>## Save everything to a file
+save.image(file = &quot;mydata.RData&quot;)   
+
+## load all objects in this file
+load(&quot;mydata.RData&quot;)     </code></pre>
+<p><code>.rda</code> and <code>.RData</code> are fairly common extensions and are recognized by other software.</p>
+<ul>
+<li><code>serialize()</code> converts individual R objects into a binary format that can be communicated across an arbitrary connection. - may get sent to a file, over a network or other connection.</li>
+<li>The output will be a raw vector coded in hexadecimal format.</li>
+<li>the only way to perfectly represent an R object in an exportable format, without losing precision or any metadata.</li>
+</ul>
+<pre class="r"><code>x &lt;- list(1, 2, 3)
+serialize(x, NULL)</code></pre>
+<pre><code>##  [1] 58 0a 00 00 00 03 00 04 00 02 00 03 05 00 00 00 00 06 43 50 31 32 35 32 00
+## [26] 00 00 13 00 00 00 03 00 00 00 0e 00 00 00 01 3f f0 00 00 00 00 00 00 00 00
+## [51] 00 0e 00 00 00 01 40 00 00 00 00 00 00 00 00 00 00 0e 00 00 00 01 40 08 00
+## [76] 00 00 00 00 00</code></pre>
+<p>can use <code>save()</code> to send it to a file.</p>
+</div>
 </div>
 
 
