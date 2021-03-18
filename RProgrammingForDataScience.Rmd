@@ -203,3 +203,17 @@ x <- readLines(con)
 head(x)                                  
 ```
 
+### 9 Subsetting R Objects
+
+- `[` preserve the class and can select multiple elements
+- `[[` can only extract from a list or a data frame, do not preserve the class, can only select a single element
+- `$` can only extract from a list or a data frame, select element by name, do not preserve class, can only select a single element
+
+
+- subsetting a vector
+```{r}
+x <- c("a","big","cat","digs","a", "hole","under","my", "bed")
+x[1:3]
+x[c(1,3,4)]
+```
+
